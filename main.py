@@ -40,12 +40,12 @@ class DoctorPhotoViewer(QDialog):
             QMessageBox.warning(self, "Error", "Doctor not found!")
 
 class MainWindow(QMainWindow):
-    def __init__(self, is_admin=False, logged_in_user=None):  # is_admin değişkenini alıyoruz
+    def __init__(self, is_admin=False, logged_in_user=None):  
         super().__init__()
         self.setWindowTitle("Blood Donation Database")
         self.setGeometry(100, 100, 1200, 800)
         self.db = Database()
-        self.is_admin = is_admin  # 👈 Bunu buraya ekle!
+        self.is_admin = is_admin  
         self.logged_in_user = logged_in_user
 
         self.central_widget = QWidget()
@@ -72,9 +72,9 @@ class MainWindow(QMainWindow):
         self.create_tab("Appointments", self.create_appointment_table, self.appointment_crud)
         self.create_appointment_tab()
 
-        if self.is_admin:  # Eğer giriş yapan kullanıcı admin ise bu sekmeyi ekle
+        if self.is_admin:  
             self.create_tab("Doctors", self.create_doctor_table, self.doctor_crud)
-            self.create_tab("Admin Controls", self.create_admin_table, self.admin_crud)  # Admin sekmesi eklendi
+            self.create_tab("Admin Controls", self.create_admin_table, self.admin_crud)  
 
 
     def create_tab(self, title, table_function, crud_function):
@@ -168,7 +168,7 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"An error occurred while adding donor: {e}")
         
-        def delete_donor():  # 👈 Yeni eklenen fonksiyon
+        def delete_donor():  
             donor_id, ok = QInputDialog.getText(self, "Delete Donor", "Enter Donor ID:")
             if not ok or not donor_id:
                 return
@@ -290,7 +290,7 @@ class MainWindow(QMainWindow):
             if ok and nurse_id:
                 delete_entry("nurse", nurse_id)
 
-         # 📌 Admin panelindeki butonlar
+         
         add_user_button = QPushButton("Add User")
         add_user_button.clicked.connect(add_user)
 
@@ -411,12 +411,12 @@ class MainWindow(QMainWindow):
     
     def cancel_appointment(self):
         try:
-            patient_name = self.logged_in_user  # Kullanıcı adı
+            patient_name = self.logged_in_user  
             if not patient_name:
                 QMessageBox.warning(self, "Error", "User not found. Please log in again.")
                 return
 
-            # Kullanıcının randevularını getir (Eğer ID ile kontrol ediyorsan, doğru SQL sorgusunu kullan!)
+            
             query = "SELECT ID, date, time, hospital_id FROM appointment WHERE patient_id = %s"
             appointments = self.db.fetch_query(query, (self.logged_in_user,))
 
@@ -424,7 +424,7 @@ class MainWindow(QMainWindow):
                 QMessageBox.information(self, "No Appointments", "You have no scheduled appointments.")
                 return
 
-            # Kullanıcının iptal edebileceği randevuları listele
+           
             appointment_choices = [f"{apt['date']} {apt['time']} at {apt['hospital_id']}" for apt in appointments]
             appointment_ids = [apt['ID'] for apt in appointments]
 
@@ -432,7 +432,7 @@ class MainWindow(QMainWindow):
             if not ok or not selected_appointment:
                 return
 
-            # Seçilen randevunun ID'sini al
+           
             selected_index = appointment_choices.index(selected_appointment)
             selected_appointment_id = appointment_ids[selected_index]
 
@@ -542,9 +542,9 @@ if __name__ == "__main__":
 
     login_window = LoginWindow()
     if login_window.exec_() == QDialog.Accepted:
-        is_admin = login_window.is_admin  # 👈 Admin olup olmadığını kontrol et
-        logged_in_user = login_window.get_logged_in_username()  # 👈 Kullanıcı adını al
-        main_window = MainWindow(is_admin=is_admin, logged_in_user=logged_in_user)  # 👈 Kullanıcı adı ile ana pencereyi başlat
+        is_admin = login_window.is_admin  
+        logged_in_user = login_window.get_logged_in_username()  
+        main_window = MainWindow(is_admin=is_admin, logged_in_user=logged_in_user)  
         main_window.show()
         sys.exit(app.exec_())
 
