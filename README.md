@@ -46,9 +46,6 @@ Run the application:
 ![Screenshot from 2025-02-01 15-39-28](https://github.com/user-attachments/assets/9697d2b2-df96-4660-b0fc-30e2e4726d7c)
 
 
-![Dashboard Screenshot](file:///home/gulistan/Screenshot%20from%202025-02-01%2015-37-37.png)
-
-
 ![Dashboard Screenshot](https://github.com/user-attachments/assets/5a32de3b-2640-435c-a14e-ee212076fab9)
 
 ![Dashboard Screenshot](https://github.com/user-attachments/assets/3dde342b-b9fd-41ea-a3c4-0530be976303)
