@@ -40,7 +40,7 @@ Run the application:
 
 ![Dashboard Screenshot](https://github.com/user-attachments/assets/0b6802d1-19ce-4f6a-b47b-ef23c6cccb83)
 
-![Dashboard Screenshot](https://github.com/user-attachments/assets/23bfb44c-ea51-4bbf-bb20-1b4425061053)
+![Dashboard Screenshot](file:///home/gulistan/Screenshot%20from%202025-02-01%2015-37-37.png)
 
 ![Dashboard Screenshot](file:///home/gulistan/Screenshot%20from%202025-02-01%2015-37-37.png)
 
