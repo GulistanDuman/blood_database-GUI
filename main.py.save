@@ -1,0 +1,161 @@
+from PyQt5.QtWidgets import QApplication, QDialog, QMainWindow, QVBoxLayout, QTabWidget, QPushButton, QWidget, QTableWidget, QTableWidgetItem, QInputDialog, QLabel, QComboBox, QDateTimeEdit, QMessageBox
+from PyQt5.QtGui import QBrush, QColor, QPalette, QPixmap
+from PyQt5.QtCore import Qt, QDateTime
+from database import Database
+from login import LoginWindow
+import os
+
+class DoctorPhotoViewer(QDialog):
+    def __init__(self, doctor_id, db):
+        super().__init__()
+        self.setWindowTitle("Doctor Photo")
+        self.setGeometry(300, 200, 400, 400)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        doctor = db.fetch_query(f"SELECT name, photo_path FROM doctor WHERE ID = '{doctor_id}'")
+        if doctor:
+            doctor = doctor[0]
+            name_label = QLabel(f"Doctor: {doctor['name']}")
+            layout.addWidget(name_label)
+
+            if doctor['photo_path']:
+                photo_path = os.path.join('blood_database_app', doctor['photo_path'])
+                if os.path.exists(photo_path):
+                    pixmap = QPixmap(photo_path)
+                    photo_label = QLabel()
+                    photo_label.setPixmap(pixmap.scaled(300, 300, Qt.KeepAspectRatio))
+                    layout.addWidget(photo_label)
+                else:
+                    layout.addWidget(QLabel("Photo file not found."))
+            else:
+                layout.addWidget(QLabel("No photo available."))
+        else:
+            QMessageBox.warning(self, "Error", "Doctor not found!")
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Blood Donation Database")
+        self.setGeometry(100, 100, 1200, 800)
+        self.db = Database()
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        self.layout = QVBoxLayout()
+        self.central_widget.setLayout(self.layout)
+        self.tabs = QTabWidget()
+        self.layout.addWidget(self.tabs)
+        self.create_tab("Appointments", self.create_appointment_table, self.appointment_crud)
+        self.create_appointment_tab()
+
+    def create_tab(self, title, table_function, crud_function):
+        tab = QWidget()
+        self.tabs.addTab(tab, title)
+        layout = QVBoxLayout()
+        tab.setLayout(layout)
+        table = table_function()
+        crud_buttons = crud_function(table)
+        layout.addWidget(table)
+        for button in crud_buttons:
+            layout.addWidget(button)
+
+    def create_appointment_table(self):
+        return self.create_generic_table(["Block", "Time", "Date", "Room Number"])
+
+    def create_generic_table(self, headers):
+        table = QTableWidget()
+        table.setColumnCount(len(headers))
+        table.setHorizontalHeaderLabels(headers)
+        table.setAlternatingRowColors(True)
+        return table
+
+    def create_appointment_tab(self):
+        tab = QWidget()
+        layout = QVBoxLayout()
+
+        patient_label = QLabel("Select Patient:")
+        layout.addWidget(patient_label)
+
+        self.patient_dropdown = QComboBox()
+        patients = self.db.fetch_query("SELECT ID, name FROM patient")
+        for patient in patients:
+            self.patient_dropdown.addItem(patient['name'], patient['ID'])
+        layout.addWidget(self.patient_dropdown)
+
+        doctor_label = QLabel("Select Doctor:")
+        layout.addWidget(doctor_label)
+
+        self.doctor_dropdown = QComboBox()
+        doctors = self.db.fetch_query("SELECT ID, name FROM doctor")
+        for doctor in doctors:
+            self.doctor_dropdown.addItem(doctor['name'], doctor['ID'])
+        layout.addWidget(self.doctor_dropdown)
+
+        hospital_label = QLabel("Select Hospital:")
+        layout.addWidget(hospital_label)
+
+        self.hospital_dropdown = QComboBox()
+        hospitals = self.db.fetch_query("SELECT host_name, address FROM hospital")
+        for hospital in hospitals:
+            self.hospital_dropdown.addItem(hospital['host_name'], hospital['host_name'])
+        layout.addWidget(self.hospital_dropdown)
+
+        time_label = QLabel("Select Appointment Time:")
+        layout.addWidget(time_label)
+
+        self.time_input = QDateTimeEdit()
+        self.time_input.setCalendarPopup(True)
+        self.time_input.setMinimumDateTime(QDateTime.currentDateTime())
+        layout.addWidget(self.time_input)
+
+        book_button = QPushButton("Book Appointment")
+        book_button.clicked.connect(self.book_appointment)
+        layout.addWidget(book_button)
+
+        tab.setLayout(layout)
+        self.tabs.addTab(tab, "Book Appointment")
+
+    def book_appointment(self):
+        patient_id = self.patient_dropdown.currentData()
+        doctor_id = self.doctor_dropdown.currentData()
+        hospital_id = self.hospital_dropdown.currentText()
+        appointment_time = self.time_input.dateTime()
+
+        current_time = QDateTime.currentDateTime()
+        print("Current Time:", current_time.toString("yyyy-MM-dd HH:mm:ss"))
+        print("Appointment Time:", appointment_time.toString("yyyy-MM-dd HH:mm:ss"))
+
+        if appointment_time < current_time:
+            QMessageBox.warning(self, "Invalid Date", "You cannot book an appointment in the past.")
+            return
+
+        query_check = """
+            SELECT * FROM appointment
+            WHERE date = %s AND time = %s AND hospital_id = %s
+        """
+        self.db.cursor.execute(query_check, (appointment_time.toString("yyyy-MM-dd"), appointment_time.toString("HH:mm:ss"), hospital_id))
+        conflict = self.db.cursor.fetchone()
+
+        if conflict:
+            QMessageBox.warning(self, "Conflict", "An appointment already exists for the selected time and hospital.")
+            return
+
+        query_insert = """
+            INSERT INTO appointment (date, time, hospital_id, patient_id, doctor_id)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        self.db.cursor.execute(query_insert, (appointment_time.toString("yyyy-MM-dd"), appointment_time.toString("HH:mm:ss"), hospital_id, patient_id, doctor_id))
+        self.db.conn.commit()
+
+        QMessageBox.information(self, "Success", "Your appointment has been booked successfully!")
+
+if __name__ == "__main__":
+    import sys
+    app = QApplication(sys.argv)
+
+    login_window = LoginWindow()
+    if login_window.exec_() == QDialog.Accepted:
+        main_window = MainWindow()
+        main_window.show()
+        sys.exit(app.exec_())
