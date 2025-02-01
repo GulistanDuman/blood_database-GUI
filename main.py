@@ -436,7 +436,7 @@ class MainWindow(QMainWindow):
             selected_index = appointment_choices.index(selected_appointment)
             selected_appointment_id = appointment_ids[selected_index]
 
-            # Veritabanından sil
+            
             delete_query = "DELETE FROM appointment WHERE ID = %s"
             self.db.cursor.execute(delete_query, (selected_appointment_id,))
             self.db.conn.commit()
