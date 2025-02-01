@@ -2,7 +2,7 @@ import mysql.connector
 
 class Database:
     def __init__(self):
-        """Veritabanı bağlantısını kurar."""
+        
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
@@ -19,19 +19,19 @@ class Database:
         return self.cursor.fetchall()
 
     def add_donor(self, name, donor_id, age, blood_group, disease=None):
-        """Yeni bir bağışçı ekler."""
+        
         query = "INSERT INTO donor (name, ID, age, blood_group, disease) VALUES (%s, %s, %s, %s, %s)"
         self.cursor.execute(query, (name, donor_id, age, blood_group, disease))
         self.conn.commit()
 
     def delete_donor(self, donor_id):
-        """Bağışçıyı siler."""
+        
         query = "DELETE FROM donor WHERE ID = %s"
         self.cursor.execute(query, (donor_id,))
         self.conn.commit()
 
     def update_donor(self, donor_id, name=None, age=None, blood_group=None, disease=None):
-        """Bağışçı bilgilerini günceller."""
+        
         query = "UPDATE donor SET "
         updates = []
         values = []
@@ -50,7 +50,7 @@ class Database:
             values.append(disease)
 
         if not updates:
-            return  # Güncellenecek bir şey yoksa çık
+            return  
 
         query += ", ".join(updates) + " WHERE ID = %s"
         values.append(donor_id)
@@ -58,36 +58,36 @@ class Database:
         self.conn.commit()
 
     def add_patient(self, patient_id, name, address, need_bloodgroup, host_name):
-        """Yeni bir hasta ekler."""
+        
         query = "INSERT INTO patient (ID, name, address, need_bloodgroup, host_name) VALUES (%s, %s, %s, %s, %s)"
         self.cursor.execute(query, (patient_id, name, address, need_bloodgroup, host_name))
         self.conn.commit()
 
     def delete_patient(self, patient_id):
-        """Hasta kaydını siler."""
+        
         query = "DELETE FROM patient WHERE ID = %s"
         self.cursor.execute(query, (patient_id,))
         self.conn.commit()
 
     def add_user(self, username, password, is_admin):
-        """Yeni kullanıcı ekler."""
+        
         query = "INSERT INTO users (username, password, is_admin) VALUES (%s, %s, %s)"
         self.cursor.execute(query, (username, password, is_admin))
         self.conn.commit()
 
     def delete_user(self, username):
-        """Kullanıcıyı siler."""
+        
         query = "DELETE FROM users WHERE username = %s"
         self.cursor.execute(query, (username,))
         self.conn.commit()
 
     def get_user_by_username(self, username):
-        """Kullanıcı adıyla kullanıcıyı getirir."""
+        
         query = "SELECT * FROM users WHERE username = %s"
         result = self.fetch_query(query, (username,))
         return result[0] if result else None
 
     def close_connection(self):
-        """Veritabanı bağlantısını kapatır."""
+        
         self.conn.close()
 
