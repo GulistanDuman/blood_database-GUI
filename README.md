@@ -43,7 +43,8 @@ Run the application:
 ![Screenshot from 2025-02-01 15-37-37](https://github.com/user-attachments/assets/a0f3065f-302b-4b2e-bea2-018e5edd73a3)
 
 
-![Dashboard Screenshot](file:///home/gulistan/Screenshot%20from%202025-02-01%2015-37-37.png)
+![Screenshot from 2025-02-01 15-39-28](https://github.com/user-attachments/assets/9697d2b2-df96-4660-b0fc-30e2e4726d7c)
+
 
 ![Dashboard Screenshot](file:///home/gulistan/Screenshot%20from%202025-02-01%2015-37-37.png)
 
