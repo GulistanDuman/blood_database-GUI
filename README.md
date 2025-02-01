@@ -3,7 +3,7 @@ Creating a GUI with MySQL and PyQt5
 
 # 🩸 Blood Donation Database GUI
 
-This project is a database application developed to manage blood donation processes. It features a modern user interface built with PyQt5 and integrates seamlessly with a MySQL database.
+This project is a database application developed to manage blood donation processes. It features a modern user interface built with PyQt5 and integrates seamlessly with a MySQL database.This project created on Linux-ubuntu environment.
 
 ## 🚀 Features
 - Management of donors, patients, doctors, and nurses
