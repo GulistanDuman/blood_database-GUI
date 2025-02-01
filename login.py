@@ -7,7 +7,7 @@ class LoginWindow(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Login")
-        self.setGeometry(300, 200, 500, 400)  # Yüksekliği logoya yer açmak için artırdım
+        self.setGeometry(300, 200, 500, 400)  
         self.setStyleSheet("background-color: darkred;")
 
         self.conn = mysql.connector.connect(
@@ -18,35 +18,35 @@ class LoginWindow(QDialog):
         )
         self.cursor = self.conn.cursor(dictionary=True)
 
-        self.is_admin = False  # Admin olup olmadığını takip edeceğiz
-        self.logged_in_user = None  # Kullanıcı adını saklayacağız
+        self.is_admin = False  
+        self.logged_in_user = None  
 
         self.init_ui()
 
     def init_ui(self):
         layout = QVBoxLayout(self)
 
-        # Logo ekleme
+        
         self.logo_label = QLabel(self)
-        pixmap = QPixmap("./images/background.jpg")  # Logonun yolunu ayarladım
-        self.logo_label.setPixmap(pixmap.scaled(200, 150))  # Logo boyutunu ayarladım
+        pixmap = QPixmap("./images/background.jpg")  
+        self.logo_label.setPixmap(pixmap.scaled(200, 150)) 
         self.logo_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.logo_label)
 
-        # "Save Life" metni ekleme
+        
         self.save_life_label = QLabel("Save Life", self)
         self.save_life_label.setStyleSheet("color: white; font-size: 18px; font-weight: bold;")
         self.save_life_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.save_life_label)
 
-        # Username
+       
         self.username_label = QLabel("Username:")
         self.username_label.setStyleSheet("color: white; font-weight: bold;")
         layout.addWidget(self.username_label)
         self.username_input = QLineEdit(self)
         layout.addWidget(self.username_input)
 
-        # Password
+       
         self.password_label = QLabel("Password:")
         self.password_label.setStyleSheet("color: white; font-weight: bold;")
         layout.addWidget(self.password_label)
@@ -54,7 +54,7 @@ class LoginWindow(QDialog):
         self.password_input.setEchoMode(QLineEdit.Password)
         layout.addWidget(self.password_input)
 
-        # Buttons
+        
         self.login_button = QPushButton("Login", self)
         self.login_button.setStyleSheet("background-color: white; color: darkred; font-weight: bold;")
         self.login_button.clicked.connect(self.validate_login)
