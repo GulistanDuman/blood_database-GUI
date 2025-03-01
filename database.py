@@ -6,7 +6,7 @@ class Database:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Glstn12345!",
+            password="G12345!",
             database="blood_database"
         )
         self.cursor = self.conn.cursor(dictionary=True)
